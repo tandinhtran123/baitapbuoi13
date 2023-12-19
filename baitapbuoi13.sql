@@ -9,6 +9,19 @@ SELECT COUNT(DISTINCT company_id) as duplicate_companies
 FROM job_count_cte
 WHERE job_count >=2
 --bai 2
+  (SELECT category, product, spend
+FROM product_spend
+WHERE EXTRACT(year from transaction_date) ='2022'
+and category = 'appliance'
+group by category,product, spend
+order by spend DESC limit 2)
+union all
+SELECT category, product, spend
+FROM product_spend
+WHERE EXTRACT(year from transaction_date) ='2022'
+and category = 'eletronic'
+group by category,product, spend
+order by spend DESC limit 2
 --bai 3
 WITH cte AS
 (SELECT policy_holder_id, count(case_id) as times_of_call, calL_category
@@ -23,6 +36,19 @@ FROM pages a left join page_likes b
 ON a.page_id =b.page_id
 WHERE b.liked_date is NULL
 --bai 5
+ SELECT
+date_part('month', event_date) as month,
+count(distinct user_id) as monthly_active_users
+FROM
+user_actions
+WHERE
+user_id in (select DISTINCT user_id 
+from user_actions 
+where date_part('month',event_date)=6)
+and date_part('month',event_date)=7
+and event_type in ('sign-in','like','comment')
+group by 
+date_part('month', event_date)
 --bai 6
 SELECT 
 Date_format (trans_date, '%Y-%m') as month,
